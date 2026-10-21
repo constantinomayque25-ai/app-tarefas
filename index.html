@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Minhas tarefas</title>
+<meta name="theme-color" content="#007aff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
   :root {
     --bg:#f5f5f7; --w1:#dbe7ff; --w2:#ffe3ec; --card:rgba(255,255,255,.72); --solid:#fff; --solid-t:rgba(255,255,255,.6);
@@ -72,6 +76,9 @@
   body.com-fundo main.janela { background:var(--card); -webkit-backdrop-filter:saturate(180%) blur(30px); backdrop-filter:saturate(180%) blur(30px); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); }
   body.com-fundo .conteudo { padding:24px; }
   body.com-fundo ul, body.com-fundo .stat, body.com-fundo .caixa { background:var(--solid-t); }
+  .marca { display:flex; align-items:center; gap:14px; margin-bottom:20px; } .marca h1, .marca .sub { margin:0; }
+  .marca svg { width:56px; height:56px; flex:none; filter:drop-shadow(0 3px 8px rgba(0,122,255,.35)); }
+  .desf[hidden] { display:none; }
   .desf { display:flex; align-items:center; gap:6px; } .desf input { width:90px; accent-color:var(--accent); }
   @media (max-width:480px) { body { padding:16px 10px; } }
   @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
@@ -81,8 +88,10 @@
 <div id="fundo" aria-hidden="true"></div>
 <main class="janela">
   <div class="conteudo">
-  <h1>Minhas tarefas</h1>
-  <p class="sub">Feito por mim, guardado no GitHub.</p>
+  <div class="marca">
+    <svg viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ac8fa"/><stop offset="1" stop-color="#007aff"/></linearGradient></defs><rect width="512" height="512" rx="115" fill="url(#lg)"/><path d="M150 270l75 75 140-170" fill="none" stroke="#fff" stroke-width="47" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><h1>Minhas tarefas</h1><p class="sub">Feito por mim, guardado no GitHub.</p></div>
+  </div>
 
   <div class="abas" id="abas" role="tablist">
     <button type="button" role="tab" data-a="tarefas" aria-selected="true">Tarefas</button>
