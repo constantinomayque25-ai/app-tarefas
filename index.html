@@ -6,252 +6,350 @@
 <title>Minhas tarefas</title>
 <style>
   :root {
-    --bg:#eef2f7; --card:#fff; --ink:#14213d; --muted:#5b6784; --line:#d5dcea;
-    --accent:#2f5bea; --done:#1f8a5b; --late:#c2410c; color-scheme:light;
+    --bg:#f5f5f7; --w1:#dbe7ff; --w2:#ffe3ec; --card:rgba(255,255,255,.72); --solid:#fff; --solid-t:rgba(255,255,255,.6);
+    --ink:#1d1d1f; --muted:#6e6e73; --line:rgba(60,60,67,.16); --fill:rgba(118,118,128,.12);
+    --accent:#007aff; --done:#34c759; --late:#ff3b30;
+    --shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 40px rgba(0,0,0,.10); color-scheme:light;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#101726; --card:#182238; --ink:#e8edf8; --muted:#9aa7c4; --line:#2a3857;
-            --accent:#7a9bff; --done:#55c795; --late:#fb923c; color-scheme:dark; }
+    :root { --bg:#000; --w1:#10213f; --w2:#2a1424; --card:rgba(44,44,46,.72); --solid:#1c1c1e; --solid-t:rgba(28,28,30,.6);
+      --ink:#f5f5f7; --muted:#98989d; --line:rgba(84,84,88,.6); --fill:rgba(118,118,128,.24);
+      --accent:#0a84ff; --done:#30d158; --late:#ff453a; --shadow:0 12px 40px rgba(0,0,0,.5); color-scheme:dark; }
   }
   * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; padding:40px 20px; background:var(--bg); color:var(--ink);
-         font-family:system-ui,-apple-system,"Segoe UI",sans-serif; display:flex; justify-content:center; align-items:flex-start; }
-  main { width:100%; max-width:560px; }
-  h1 { font-size:2rem; margin:0 0 4px; letter-spacing:-.02em; }
-  .sub { margin:0 0 22px; color:var(--muted); }
-  button, select { font:inherit; }
-  button { cursor:pointer; border:0; border-radius:8px; }
-  :focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
-  input[type=text], input[type=date], select { padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
+  body { margin:0; min-height:100vh; padding:40px 16px; color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Segoe UI",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased; letter-spacing:-.01em; display:flex; justify-content:center; align-items:flex-start;
+    background:var(--bg); }
+  main.janela { width:100%; max-width:640px; }
+  .conteudo { padding:0; }
+  h1 { font-size:2.1rem; font-weight:700; margin:0 0 4px; letter-spacing:-.03em; }
+  h2 { font-size:1.05rem; font-weight:600; margin:24px 0 10px; }
+  .sub { margin:0 0 20px; color:var(--muted); }
+  button, select { font:inherit; } button { cursor:pointer; border:0; border-radius:10px; transition:background .15s, opacity .15s; }
+  :focus-visible { outline:3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset:2px; }
+  input[type=text], input[type=date], select { padding:10px 12px; border:0; border-radius:10px; background:var(--fill); color:var(--ink); }
+  input[type=text]:focus, input[type=date]:focus, select:focus { outline:3px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+  .abas, .filtros { display:flex; gap:2px; padding:2px; background:var(--fill); border-radius:10px; }
+  .abas { margin-bottom:22px; } .filtros { flex-basis:100%; }
+  .abas button, .filtros button { flex:1; padding:7px 12px; background:transparent; color:var(--ink); border-radius:8px; font-size:.92rem; }
+  .abas button[aria-selected=true], .filtros button[aria-pressed=true] { background:var(--solid); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.14); }
   form { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
-  #texto { flex:1 1 100%; padding:12px 14px; }
-  .add { margin-left:auto; padding:10px 18px; background:var(--accent); color:#fff; font-weight:600; }
-  .barra { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
-  .filtros { display:flex; gap:6px; flex-basis:100%; }
-  .barra select { flex:1 1 160px; }
-  .filtros button { padding:6px 14px; background:transparent; color:var(--muted); border:1px solid var(--line); border-radius:999px; }
-  .filtros button[aria-pressed=true] { background:var(--accent); color:#fff; border-color:var(--accent); }
-  ul { list-style:none; margin:0; padding:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
-  li { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line); border-left:4px solid var(--muted); }
+  #texto { flex:1 1 100%; padding:13px 14px; font-size:1rem; }
+  .add { margin-left:auto; padding:10px 20px; background:var(--accent); color:#fff; font-weight:600; } .add:hover { opacity:.88; }
+  .barra { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:14px; } .barra select { flex:1 1 160px; }
+  ul { list-style:none; margin:0; padding:0; background:var(--solid); border-radius:12px; overflow:hidden; box-shadow:0 0 0 1px var(--line); }
+  li { display:flex; align-items:center; gap:12px; padding:13px 16px; border-bottom:1px solid var(--line); }
   li:last-child { border-bottom:0; }
-  li.p-alta { border-left-color:var(--late); } li.p-media { border-left-color:var(--accent); } li.p-baixa { border-left-color:var(--line); }
-  .corpo { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
-  .txt { overflow-wrap:anywhere; }
-  .meta { display:flex; flex-wrap:wrap; gap:10px; font-size:.85rem; color:var(--muted); }
-  .atrasada { color:var(--late); font-weight:600; }
-  li.done .txt { text-decoration:line-through; color:var(--muted); }
-  li input[type=checkbox] { width:20px; height:20px; accent-color:var(--done); }
+  .corpo { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; } .txt { overflow-wrap:anywhere; }
+  .meta { display:flex; flex-wrap:wrap; gap:10px; font-size:.82rem; color:var(--muted); } .atrasada { color:var(--late); font-weight:600; }
+  li.done .txt { color:var(--muted); text-decoration:line-through; }
+  li input[type=checkbox] { appearance:none; -webkit-appearance:none; width:22px; height:22px; flex:none; margin:0; border-radius:50%;
+    border:2px solid var(--muted); background:transparent center/14px no-repeat; cursor:pointer; transition:background-color .15s; }
+  li.p-alta input[type=checkbox] { border-color:var(--late); } li.p-media input[type=checkbox] { border-color:var(--accent); }
+  li input[type=checkbox]:checked { background-color:var(--done); border-color:var(--done);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
   li input[type=text] { width:100%; padding:8px 10px; }
-  .acao { background:transparent; color:var(--muted); padding:4px 8px; }
-  .acao:hover { color:var(--ink); }
-  .vazio { padding:28px 16px; text-align:center; color:var(--muted); display:block; }
+  .acao { background:transparent; color:var(--accent); padding:4px 8px; font-size:.9rem; } .acao:last-of-type { color:var(--late); } .acao:hover { opacity:.7; }
+  .vazio { padding:30px 16px; text-align:center; color:var(--muted); display:block; }
   .rodape { margin-top:14px; display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center; color:var(--muted); font-size:.9rem; }
-  .rodape .esp { margin-left:auto; }
-  .link { background:transparent; color:var(--muted); text-decoration:underline; padding:4px; }
-  #aviso { margin-top:8px; font-size:.9rem; color:var(--done); min-height:1.2em; }
+  .esp { margin-left:auto; } .link { background:transparent; color:var(--accent); padding:4px; } .link:hover { opacity:.7; }
+  #aviso { margin:8px 0 0; font-size:.9rem; color:var(--done); min-height:1.2em; }
+  .cards { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .stat, .caixa { background:var(--solid); border-radius:14px; padding:16px; box-shadow:0 0 0 1px var(--line); }
+  .stat b { display:block; font-size:2rem; font-weight:700; letter-spacing:-.03em; } .stat span { color:var(--muted); font-size:.88rem; }
+  svg { width:100%; height:auto; display:block; } .bar { fill:var(--accent); } .lbl { fill:var(--muted); font-size:11px; } .ax { stroke:var(--line); }
+  .hb { display:grid; grid-template-columns:80px 1fr 44px; align-items:center; gap:10px; margin:10px 0; font-size:.9rem; }
+  .trilho { height:8px; background:var(--fill); border-radius:999px; overflow:hidden; } .trilho div { height:100%; background:var(--done); border-radius:999px; }
+  .hb b { text-align:right; font-weight:600; }
+  .dia { margin:20px 0 8px; font-weight:600; } .dia span { color:var(--muted); font-weight:400; font-size:.9rem; }
+  .hora { color:var(--muted); font-size:.85rem; min-width:42px; font-variant-numeric:tabular-nums; }
+  #fundo { position:fixed; inset:0; z-index:-1; overflow:hidden; }
+  #fundo video, #fundo img { width:100%; height:100%; object-fit:cover; transform:scale(1.15); filter:blur(var(--desfoque,18px)) saturate(1.2); }
+  #fundo::after { content:""; position:absolute; inset:0; background:rgba(255,255,255,.3); }
+  @media (prefers-color-scheme: dark) { #fundo::after { background:rgba(0,0,0,.4); } }
+  body.com-fundo { background:transparent; }
+  body.com-fundo main.janela { background:var(--card); -webkit-backdrop-filter:saturate(180%) blur(30px); backdrop-filter:saturate(180%) blur(30px); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); }
+  body.com-fundo .conteudo { padding:24px; }
+  body.com-fundo ul, body.com-fundo .stat, body.com-fundo .caixa { background:var(--solid-t); }
+  .desf { display:flex; align-items:center; gap:6px; } .desf input { width:90px; accent-color:var(--accent); }
+  @media (max-width:480px) { body { padding:16px 10px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
 </style>
 </head>
 <body>
-<main>
+<div id="fundo" aria-hidden="true"></div>
+<main class="janela">
+  <div class="conteudo">
   <h1>Minhas tarefas</h1>
   <p class="sub">Feito por mim, guardado no GitHub.</p>
 
-  <form id="form">
-    <input type="text" id="texto" placeholder="O que você precisa fazer?" aria-label="Nova tarefa" autocomplete="off">
-    <input type="date" id="data" aria-label="Prazo (opcional)">
-    <select id="prio" aria-label="Prioridade">
-      <option value="alta">Prioridade alta</option>
-      <option value="media" selected>Prioridade média</option>
-      <option value="baixa">Prioridade baixa</option>
-    </select>
-    <select id="cat" aria-label="Categoria"></select>
-    <button class="add" type="submit">Adicionar</button>
-  </form>
-
-  <div class="barra">
-    <div class="filtros" id="filtros">
-      <button type="button" data-f="todas" aria-pressed="true">Todas</button>
-      <button type="button" data-f="pendentes" aria-pressed="false">Pendentes</button>
-      <button type="button" data-f="feitas" aria-pressed="false">Feitas</button>
-    </div>
-    <select id="catFiltro" aria-label="Filtrar por categoria"></select>
-    <select id="ordem" aria-label="Ordenar por">
-      <option value="criacao">Ordem de criação</option>
-      <option value="prazo">Ordenar por prazo</option>
-      <option value="prioridade">Ordenar por prioridade</option>
-    </select>
+  <div class="abas" id="abas" role="tablist">
+    <button type="button" role="tab" data-a="tarefas" aria-selected="true">Tarefas</button>
+    <button type="button" role="tab" data-a="painel" aria-selected="false">Painel</button>
+    <button type="button" role="tab" data-a="historico" aria-selected="false">Histórico</button>
   </div>
 
-  <ul id="lista"></ul>
+  <section id="vTarefas">
+    <form id="form">
+      <input type="text" id="texto" placeholder="O que você precisa fazer?" aria-label="Nova tarefa" autocomplete="off">
+      <input type="date" id="data" aria-label="Prazo (opcional)">
+      <select id="prio" aria-label="Prioridade">
+        <option value="alta">Prioridade alta</option><option value="media" selected>Prioridade média</option><option value="baixa">Prioridade baixa</option>
+      </select>
+      <select id="cat" aria-label="Categoria"></select>
+      <button class="add" type="submit">Adicionar</button>
+    </form>
+    <div class="barra">
+      <div class="filtros" id="filtros">
+        <button type="button" data-f="todas" aria-pressed="true">Todas</button>
+        <button type="button" data-f="pendentes" aria-pressed="false">Pendentes</button>
+        <button type="button" data-f="feitas" aria-pressed="false">Feitas</button>
+      </div>
+      <select id="catFiltro" aria-label="Filtrar por categoria"></select>
+      <select id="ordem" aria-label="Ordenar por">
+        <option value="criacao">Ordem de criação</option><option value="prazo">Ordenar por prazo</option><option value="prioridade">Ordenar por prioridade</option>
+      </select>
+    </div>
+    <ul id="lista"></ul>
+    <div class="rodape">
+      <span id="contagem"></span><span class="esp"></span>
+      <button class="link" id="limpar" type="button">Limpar concluídas</button>
+    </div>
+  </section>
 
-  <div class="rodape">
-    <span id="contagem"></span>
-    <span id="semana"></span>
+  <section id="vPainel" hidden>
+    <div class="cards" id="cards"></div>
+    <h2>Concluídas nos últimos 14 dias</h2>
+    <div class="caixa" id="grafico"></div>
+    <h2>Progresso por categoria</h2>
+    <div class="caixa" id="categorias"></div>
+  </section>
+
+  <section id="vHist" hidden><div id="historico"></div></section>
+
+  <div class="rodape" style="margin-top:24px">
     <span class="esp"></span>
-    <button class="link" id="limpar" type="button">Limpar concluídas</button>
+    <button class="link" id="fundoBtn" type="button">Escolher fundo</button>
+    <button class="link" id="fundoTira" type="button" hidden>Remover fundo</button>
+    <label class="desf" id="desfLabel" hidden>Desfoque <input type="range" id="desf" min="0" max="40" value="18" aria-label="Quantidade de desfoque do fundo"></label>
+    <input type="file" id="fundoArq" accept="video/*,image/*" hidden>
     <button class="link" id="exportar" type="button">Exportar backup</button>
     <button class="link" id="importar" type="button">Importar backup</button>
     <input type="file" id="arquivo" accept="application/json,.json" hidden>
   </div>
   <p id="aviso" role="status"></p>
+  </div>
 </main>
 
 <script>
   const $ = id => document.getElementById(id);
   const CATS = ["Trabalho", "Casa", "Estudos", "Outros"];
   const PRIO = { alta: 0, media: 1, baixa: 2 };
-  let tarefas = [], filtro = "todas", catFiltro = "todas", ordem = "criacao", editando = null;
+  const rotulo = { alta: "Prioridade alta", media: "Prioridade média", baixa: "Prioridade baixa" };
+  let tarefas = [], filtro = "todas", catFiltro = "todas", ordem = "criacao", editando = null, aba = "tarefas";
 
   function normalizar(t, i) {
-    return {
-      id: t.id || Date.now() + i,
-      texto: String(t.texto),
-      feita: !!t.feita,
-      data: t.data || "",
-      prio: t.prio in PRIO ? t.prio : "media",
-      cat: CATS.includes(t.cat) ? t.cat : "Outros",
-      feitaEm: t.feitaEm || null
-    };
+    return { id: t.id || Date.now() + i, texto: String(t.texto), feita: !!t.feita, data: t.data || "",
+      prio: t.prio in PRIO ? t.prio : "media", cat: CATS.includes(t.cat) ? t.cat : "Outros",
+      feitaEm: t.feitaEm || null, arquivada: !!t.arquivada };
   }
   try { tarefas = JSON.parse(localStorage.getItem("tarefas") || "[]"); } catch (e) { tarefas = []; }
   tarefas = tarefas.filter(t => t && typeof t.texto === "string").map(normalizar);
 
   const salvar = () => { try { localStorage.setItem("tarefas", JSON.stringify(tarefas)); } catch (e) {} };
-  const aviso = msg => { $("aviso").textContent = msg; setTimeout(() => { $("aviso").textContent = ""; }, 4000); };
-  const hoje = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  const aviso = m => { $("aviso").textContent = m; setTimeout(() => { $("aviso").textContent = ""; }, 4000); };
+  const dia = ts => { const d = new Date(ts); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  const hoje = () => dia(Date.now());
   const fmt = s => { const p = s.split("-"); return p[2] + "/" + p[1] + "/" + p[0]; };
-  const rotulo = { alta: "Prioridade alta", media: "Prioridade média", baixa: "Prioridade baixa" };
+  const span = (cls, txt) => { const s = document.createElement("span"); if (cls) s.className = cls; s.textContent = txt; return s; };
 
-  CATS.forEach(c => {
-    $("cat").add(new Option(c, c));
-    $("catFiltro").add(new Option(c, c));
-  });
+  CATS.forEach(c => { $("cat").add(new Option(c, c)); $("catFiltro").add(new Option(c, c)); });
   $("catFiltro").insertBefore(new Option("Todas as categorias", "todas"), $("catFiltro").firstChild);
-  $("catFiltro").value = "todas";
-  $("cat").value = "Outros";
+  $("catFiltro").value = "todas"; $("cat").value = "Outros";
 
-  function span(cls, texto) { const s = document.createElement("span"); if (cls) s.className = cls; s.textContent = texto; return s; }
-
-  function desenhar() {
-    const lista = $("lista");
-    lista.innerHTML = "";
+  function desenharTarefas() {
+    const lista = $("lista"); lista.innerHTML = "";
+    const ativas = tarefas.filter(t => !t.arquivada);
     const chave = t => t.data || "9999-99-99";
-    let v = tarefas.filter(t =>
-      (filtro === "todas" || (filtro === "pendentes" ? !t.feita : t.feita)) &&
-      (catFiltro === "todas" || t.cat === catFiltro));
+    let v = ativas.filter(t => (filtro === "todas" || (filtro === "pendentes" ? !t.feita : t.feita)) && (catFiltro === "todas" || t.cat === catFiltro));
     if (ordem === "prazo") v.sort((a, b) => chave(a) < chave(b) ? -1 : chave(a) > chave(b) ? 1 : 0);
     if (ordem === "prioridade") v.sort((a, b) => PRIO[a.prio] - PRIO[b.prio]);
-
     if (!v.length) {
-      const li = document.createElement("li");
-      li.style.borderLeftColor = "transparent";
-      li.appendChild(span("vazio", tarefas.length ? "Nenhuma tarefa neste filtro." : "Nenhuma tarefa ainda. Escreva a primeira acima."));
+      const li = document.createElement("li"); li.style.borderLeftColor = "transparent";
+      li.appendChild(span("vazio", ativas.length ? "Nenhuma tarefa neste filtro." : "Nenhuma tarefa ainda. Escreva a primeira acima."));
       lista.appendChild(li);
     }
-
     v.forEach(t => {
       const li = document.createElement("li");
-      li.className = "p-" + t.prio + (t.feita ? " done" : "");
-      li.title = rotulo[t.prio];
-
-      const cx = document.createElement("input");
-      cx.type = "checkbox"; cx.checked = t.feita;
+      li.className = "p-" + t.prio + (t.feita ? " done" : ""); li.title = rotulo[t.prio];
+      const cx = document.createElement("input"); cx.type = "checkbox"; cx.checked = t.feita;
       cx.setAttribute("aria-label", "Marcar como feita");
       cx.onchange = () => { t.feita = cx.checked; t.feitaEm = t.feita ? Date.now() : null; salvar(); desenhar(); };
-
-      const corpo = document.createElement("div");
-      corpo.className = "corpo";
+      const corpo = document.createElement("div"); corpo.className = "corpo";
       if (editando === t.id) {
-        const campo = document.createElement("input");
-        campo.type = "text"; campo.value = t.texto;
+        const campo = document.createElement("input"); campo.type = "text"; campo.value = t.texto;
         campo.setAttribute("aria-label", "Editar tarefa");
         campo.onkeydown = e => {
           if (e.key === "Enter") { const x = campo.value.trim(); if (x) t.texto = x; editando = null; salvar(); desenhar(); }
           else if (e.key === "Escape") { editando = null; desenhar(); }
         };
-        corpo.appendChild(campo);
-        setTimeout(() => campo.focus(), 0);
+        corpo.appendChild(campo); setTimeout(() => campo.focus(), 0);
       } else {
         corpo.appendChild(span("txt", t.texto));
-        const meta = document.createElement("div");
-        meta.className = "meta";
-        meta.appendChild(span("", t.cat));
-        meta.appendChild(span("", rotulo[t.prio]));
-        if (t.data) {
-          const atrasada = !t.feita && t.data < hoje();
-          meta.appendChild(span(atrasada ? "atrasada" : "", (atrasada ? "Atrasada: " : "Prazo: ") + fmt(t.data)));
-        }
+        const meta = document.createElement("div"); meta.className = "meta";
+        meta.append(span("", t.cat), span("", rotulo[t.prio]));
+        if (t.data) { const at = !t.feita && t.data < hoje(); meta.appendChild(span(at ? "atrasada" : "", (at ? "Atrasada: " : "Prazo: ") + fmt(t.data))); }
         corpo.appendChild(meta);
       }
-
-      const ed = document.createElement("button");
-      ed.className = "acao"; ed.textContent = "Editar";
+      const ed = document.createElement("button"); ed.className = "acao"; ed.textContent = "Editar";
       ed.onclick = () => { editando = t.id; desenhar(); };
-      const del = document.createElement("button");
-      del.className = "acao"; del.textContent = "Apagar";
+      const del = document.createElement("button"); del.className = "acao"; del.textContent = "Apagar";
       del.onclick = () => { tarefas = tarefas.filter(x => x.id !== t.id); salvar(); desenhar(); };
-
-      li.append(cx, corpo, ed, del);
-      lista.appendChild(li);
+      li.append(cx, corpo, ed, del); lista.appendChild(li);
     });
-
-    const abertas = tarefas.filter(t => !t.feita).length;
-    const semana = tarefas.filter(t => t.feita && t.feitaEm && Date.now() - t.feitaEm < 7 * 864e5).length;
-    $("contagem").textContent = tarefas.length ? abertas + " de " + tarefas.length + " pendentes" : "";
-    $("semana").textContent = semana ? semana + (semana === 1 ? " feita" : " feitas") + " nos últimos 7 dias" : "";
-    $("limpar").hidden = !tarefas.some(t => t.feita);
+    const abertas = ativas.filter(t => !t.feita).length;
+    $("contagem").textContent = ativas.length ? abertas + " de " + ativas.length + " pendentes" : "";
+    $("limpar").hidden = !ativas.some(t => t.feita);
   }
 
-  $("form").onsubmit = e => {
-    e.preventDefault();
-    const texto = $("texto").value.trim();
-    if (!texto) return;
-    tarefas.push(normalizar({ texto, data: $("data").value, prio: $("prio").value, cat: $("cat").value }, 0));
-    $("texto").value = ""; $("data").value = "";
-    salvar(); desenhar();
-  };
+  function desenharPainel() {
+    const feitas = tarefas.filter(t => t.feita && t.feitaEm), cont = {};
+    feitas.forEach(t => { const d = dia(t.feitaEm); cont[d] = (cont[d] || 0) + 1; });
+    const dias = [];
+    for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); dias.push(dia(d.getTime())); }
+    const semana = dias.slice(-7).reduce((s, d) => s + (cont[d] || 0), 0);
+    let seq = 0; const p = new Date(); if (!cont[dia(p.getTime())]) p.setDate(p.getDate() - 1);
+    while (cont[dia(p.getTime())]) { seq++; p.setDate(p.getDate() - 1); }
+    const total = tarefas.length, ok = tarefas.filter(t => t.feita).length;
+    const taxa = total ? Math.round(ok / total * 100) : 0;
+    const card = (n, r) => "<div class='stat'><b>" + n + "</b><span>" + r + "</span></div>";
+    $("cards").innerHTML = card(ok, "concluídas no total") + card(semana, "concluídas em 7 dias") +
+      card(seq + (seq === 1 ? " dia" : " dias"), "de sequência") + card(taxa + "%", "taxa de conclusão");
 
+    const max = Math.max(1, ...dias.map(d => cont[d] || 0)), W = 520, base = 140, bw = 24, gap = (W - 14 * bw) / 15;
+    let s = "<svg viewBox='0 0 " + W + " 165' role='img' aria-label='Tarefas concluídas por dia nos últimos 14 dias'>";
+    dias.forEach((d, i) => {
+      const n = cont[d] || 0, h = n / max * 100, x = gap + i * (bw + gap);
+      if (n) s += "<rect class='bar' x='" + x + "' y='" + (base - h) + "' width='" + bw + "' height='" + h + "' rx='4'><title>" + fmt(d) + ": " + n + "</title></rect><text class='lbl' x='" + (x + bw / 2) + "' y='" + (base - h - 6) + "' text-anchor='middle'>" + n + "</text>";
+      s += "<text class='lbl' x='" + (x + bw / 2) + "' y='" + (base + 18) + "' text-anchor='middle'>" + d.slice(8) + "</text>";
+    });
+    $("grafico").innerHTML = s + "<line class='ax' x1='0' x2='" + W + "' y1='" + base + "' y2='" + base + "'/></svg>";
+
+    $("categorias").innerHTML = CATS.map(c => {
+      const tt = tarefas.filter(t => t.cat === c), dd = tt.filter(t => t.feita).length;
+      return "<div class='hb'><span>" + c + "</span><div class='trilho'><div style='width:" + (tt.length ? dd / tt.length * 100 : 0) + "%'></div></div><b>" + dd + "/" + tt.length + "</b></div>";
+    }).join("");
+  }
+
+  function desenharHistorico() {
+    const box = $("historico"); box.innerHTML = "";
+    const feitas = tarefas.filter(t => t.feita && t.feitaEm).sort((a, b) => b.feitaEm - a.feitaEm);
+    if (!feitas.length) { const c = document.createElement("div"); c.className = "caixa"; c.appendChild(span("vazio", "Nada concluído ainda. Marque uma tarefa como feita e ela aparece aqui.")); box.appendChild(c); return; }
+    let atual = "", ul = null;
+    feitas.forEach(t => {
+      const d = dia(t.feitaEm);
+      if (d !== atual) {
+        atual = d;
+        const n = feitas.filter(x => dia(x.feitaEm) === d).length;
+        const h = document.createElement("div"); h.className = "dia";
+        h.append(fmt(d) + " ", span("", n + (n === 1 ? " concluída" : " concluídas")));
+        box.appendChild(h); ul = document.createElement("ul"); box.appendChild(ul);
+      }
+      const li = document.createElement("li"); li.className = "p-" + t.prio;
+      const corpo = document.createElement("div"); corpo.className = "corpo";
+      corpo.appendChild(span("txt", t.texto)); corpo.appendChild(span("meta", t.cat));
+      li.append(span("hora", new Date(t.feitaEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })), corpo);
+      ul.appendChild(li);
+    });
+  }
+
+  function desenhar() {
+    $("vTarefas").hidden = aba !== "tarefas"; $("vPainel").hidden = aba !== "painel"; $("vHist").hidden = aba !== "historico";
+    if (aba === "tarefas") desenharTarefas();
+    if (aba === "painel") desenharPainel();
+    if (aba === "historico") desenharHistorico();
+  }
+
+  $("abas").onclick = e => {
+    const a = e.target.dataset.a; if (!a) return; aba = a;
+    $("abas").querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", b.dataset.a === a ? "true" : "false"));
+    desenhar();
+  };
+  $("form").onsubmit = e => {
+    e.preventDefault(); const texto = $("texto").value.trim(); if (!texto) return;
+    tarefas.push(normalizar({ texto, data: $("data").value, prio: $("prio").value, cat: $("cat").value }, 0));
+    $("texto").value = ""; $("data").value = ""; salvar(); desenhar();
+  };
   $("filtros").onclick = e => {
-    const f = e.target.getAttribute("data-f");
-    if (!f) return;
-    filtro = f;
+    const f = e.target.dataset.f; if (!f) return; filtro = f;
     $("filtros").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.f === f ? "true" : "false"));
     desenhar();
   };
   $("catFiltro").onchange = e => { catFiltro = e.target.value; desenhar(); };
   $("ordem").onchange = e => { ordem = e.target.value; desenhar(); };
-  $("limpar").onclick = () => { tarefas = tarefas.filter(t => !t.feita); salvar(); desenhar(); };
-
+  $("limpar").onclick = () => {
+    const n = tarefas.filter(t => t.feita && !t.arquivada).length;
+    tarefas.forEach(t => { if (t.feita) t.arquivada = true; });
+    salvar(); desenhar(); aviso(n + " tarefas saíram da lista e continuam no Histórico e no Painel.");
+  };
   $("exportar").onclick = () => {
     const blob = new Blob([JSON.stringify(tarefas, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "tarefas-" + hoje() + ".json";
-    a.click();
-    URL.revokeObjectURL(a.href);
-    aviso("Backup exportado.");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "tarefas-" + hoje() + ".json";
+    a.click(); URL.revokeObjectURL(a.href); aviso("Backup exportado.");
   };
   $("importar").onclick = () => $("arquivo").click();
   $("arquivo").onchange = e => {
-    const arq = e.target.files[0];
-    if (!arq) return;
+    const arq = e.target.files[0]; if (!arq) return;
     const leitor = new FileReader();
     leitor.onload = () => {
       try {
-        const dados = JSON.parse(leitor.result);
-        if (!Array.isArray(dados)) throw new Error("formato");
-        const novos = dados.filter(t => t && typeof t.texto === "string").map(normalizar)
-          .filter(n => !tarefas.some(t => t.id === n.id));
-        tarefas = tarefas.concat(novos);
-        salvar(); desenhar();
-        aviso(novos.length + " tarefas importadas.");
-      } catch (err) {
-        aviso("Não foi possível ler esse arquivo. Escolha um backup exportado por este app.");
-      }
+        const dados = JSON.parse(leitor.result); if (!Array.isArray(dados)) throw new Error("formato");
+        const novos = dados.filter(t => t && typeof t.texto === "string").map(normalizar).filter(n => !tarefas.some(t => t.id === n.id));
+        tarefas = tarefas.concat(novos); salvar(); desenhar(); aviso(novos.length + " tarefas importadas.");
+      } catch (err) { aviso("Não foi possível ler esse arquivo. Escolha um backup exportado por este app."); }
       $("arquivo").value = "";
     };
     leitor.readAsText(arq);
   };
+  // Fundo (imagem ou vídeo) guardado no IndexedDB, com desfoque ajustável
+  const BD = {
+    abrir() { return new Promise((ok, erro) => { const r = indexedDB.open("tarefas-fundo", 1); r.onupgradeneeded = () => r.result.createObjectStore("f"); r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error); }); },
+    async ler() { const db = await this.abrir(); return new Promise(ok => { const q = db.transaction("f").objectStore("f").get("fundo"); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); },
+    async gravar(b) { const db = await this.abrir(); return new Promise(ok => { const t = db.transaction("f", "readwrite"); if (b) t.objectStore("f").put(b, "fundo"); else t.objectStore("f").delete("fundo"); t.oncomplete = () => ok(true); t.onerror = () => ok(false); t.onabort = () => ok(false); }); }
+  };
+  let urlFundo = null;
+  function aplicarFundo(blob) {
+    const box = $("fundo"); box.innerHTML = "";
+    if (urlFundo) { URL.revokeObjectURL(urlFundo); urlFundo = null; }
+    document.body.classList.toggle("com-fundo", !!blob);
+    $("fundoTira").hidden = !blob; $("desfLabel").hidden = !blob;
+    if (!blob) return;
+    urlFundo = URL.createObjectURL(blob);
+    const video = blob.type.startsWith("video");
+    const el = document.createElement(video ? "video" : "img");
+    el.src = urlFundo;
+    if (video) {
+      el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true;
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) el.autoplay = false; else el.play().catch(() => {});
+    }
+    box.appendChild(el);
+  }
+  function desfoque(v) { document.documentElement.style.setProperty("--desfoque", v + "px"); }
+  try { const d = localStorage.getItem("desfoque"); if (d !== null) { $("desf").value = d; desfoque(d); } } catch (e) {}
+  BD.ler().then(b => { if (b) aplicarFundo(b); }).catch(() => {});
+
+  $("fundoBtn").onclick = () => $("fundoArq").click();
+  $("fundoArq").onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    if (!/^(video|image)\//.test(f.type)) { aviso("Escolha uma imagem ou um vídeo."); return; }
+    aplicarFundo(f);
+    let salvo = false; try { salvo = await BD.gravar(f); } catch (err) {}
+    aviso(salvo ? "Fundo aplicado e guardado neste navegador." : "Fundo aplicado, mas não coube na memória do navegador: ele some ao fechar. Tente um vídeo menor.");
+    $("fundoArq").value = "";
+  };
+  $("fundoTira").onclick = async () => { aplicarFundo(null); try { await BD.gravar(null); } catch (err) {} aviso("Fundo removido."); };
+  $("desf").oninput = e => { desfoque(e.target.value); try { localStorage.setItem("desfoque", e.target.value); } catch (err) {} };
 
   desenhar();
 </script>
