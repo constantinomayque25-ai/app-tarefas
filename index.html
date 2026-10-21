@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minhas tarefas</title>
+<style>
+  :root {
+    --bg:#eef2f7; --card:#fff; --ink:#14213d; --muted:#5b6784; --line:#d5dcea;
+    --accent:#2f5bea; --done:#1f8a5b; --late:#c2410c; color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#101726; --card:#182238; --ink:#e8edf8; --muted:#9aa7c4; --line:#2a3857;
+            --accent:#7a9bff; --done:#55c795; --late:#fb923c; color-scheme:dark; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; padding:40px 20px; background:var(--bg); color:var(--ink);
+         font-family:system-ui,-apple-system,"Segoe UI",sans-serif; display:flex; justify-content:center; align-items:flex-start; }
+  main { width:100%; max-width:560px; }
+  h1 { font-size:2rem; margin:0 0 4px; letter-spacing:-.02em; }
+  .sub { margin:0 0 22px; color:var(--muted); }
+  button, select { font:inherit; }
+  button { cursor:pointer; border:0; border-radius:8px; }
+  :focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  input[type=text], input[type=date], select { padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
+  form { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  #texto { flex:1 1 100%; padding:12px 14px; }
+  .add { margin-left:auto; padding:10px 18px; background:var(--accent); color:#fff; font-weight:600; }
+  .barra { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
+  .filtros { display:flex; gap:6px; flex-basis:100%; }
+  .barra select { flex:1 1 160px; }
+  .filtros button { padding:6px 14px; background:transparent; color:var(--muted); border:1px solid var(--line); border-radius:999px; }
+  .filtros button[aria-pressed=true] { background:var(--accent); color:#fff; border-color:var(--accent); }
+  ul { list-style:none; margin:0; padding:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  li { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line); border-left:4px solid var(--muted); }
+  li:last-child { border-bottom:0; }
+  li.p-alta { border-left-color:var(--late); } li.p-media { border-left-color:var(--accent); } li.p-baixa { border-left-color:var(--line); }
+  .corpo { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .txt { overflow-wrap:anywhere; }
+  .meta { display:flex; flex-wrap:wrap; gap:10px; font-size:.85rem; color:var(--muted); }
+  .atrasada { color:var(--late); font-weight:600; }
+  li.done .txt { text-decoration:line-through; color:var(--muted); }
+  li input[type=checkbox] { width:20px; height:20px; accent-color:var(--done); }
+  li input[type=text] { width:100%; padding:8px 10px; }
+  .acao { background:transparent; color:var(--muted); padding:4px 8px; }
+  .acao:hover { color:var(--ink); }
+  .vazio { padding:28px 16px; text-align:center; color:var(--muted); display:block; }
+  .rodape { margin-top:14px; display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center; color:var(--muted); font-size:.9rem; }
+  .rodape .esp { margin-left:auto; }
+  .link { background:transparent; color:var(--muted); text-decoration:underline; padding:4px; }
+  #aviso { margin-top:8px; font-size:.9rem; color:var(--done); min-height:1.2em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Minhas tarefas</h1>
+  <p class="sub">Feito por mim, guardado no GitHub.</p>
+
+  <form id="form">
+    <input type="text" id="texto" placeholder="O que você precisa fazer?" aria-label="Nova tarefa" autocomplete="off">
+    <input type="date" id="data" aria-label="Prazo (opcional)">
+    <select id="prio" aria-label="Prioridade">
+      <option value="alta">Prioridade alta</option>
+      <option value="media" selected>Prioridade média</option>
+      <option value="baixa">Prioridade baixa</option>
+    </select>
+    <select id="cat" aria-label="Categoria"></select>
+    <button class="add" type="submit">Adicionar</button>
+  </form>
+
+  <div class="barra">
+    <div class="filtros" id="filtros">
+      <button type="button" data-f="todas" aria-pressed="true">Todas</button>
+      <button type="button" data-f="pendentes" aria-pressed="false">Pendentes</button>
+      <button type="button" data-f="feitas" aria-pressed="false">Feitas</button>
+    </div>
+    <select id="catFiltro" aria-label="Filtrar por categoria"></select>
+    <select id="ordem" aria-label="Ordenar por">
+      <option value="criacao">Ordem de criação</option>
+      <option value="prazo">Ordenar por prazo</option>
+      <option value="prioridade">Ordenar por prioridade</option>
+    </select>
+  </div>
+
+  <ul id="lista"></ul>
+
+  <div class="rodape">
+    <span id="contagem"></span>
+    <span id="semana"></span>
+    <span class="esp"></span>
+    <button class="link" id="limpar" type="button">Limpar concluídas</button>
+    <button class="link" id="exportar" type="button">Exportar backup</button>
+    <button class="link" id="importar" type="button">Importar backup</button>
+    <input type="file" id="arquivo" accept="application/json,.json" hidden>
+  </div>
+  <p id="aviso" role="status"></p>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const CATS = ["Trabalho", "Casa", "Estudos", "Outros"];
+  const PRIO = { alta: 0, media: 1, baixa: 2 };
+  let tarefas = [], filtro = "todas", catFiltro = "todas", ordem = "criacao", editando = null;
+
+  function normalizar(t, i) {
+    return {
+      id: t.id || Date.now() + i,
+      texto: String(t.texto),
+      feita: !!t.feita,
+      data: t.data || "",
+      prio: t.prio in PRIO ? t.prio : "media",
+      cat: CATS.includes(t.cat) ? t.cat : "Outros",
+      feitaEm: t.feitaEm || null
+    };
+  }
+  try { tarefas = JSON.parse(localStorage.getItem("tarefas") || "[]"); } catch (e) { tarefas = []; }
+  tarefas = tarefas.filter(t => t && typeof t.texto === "string").map(normalizar);
+
+  const salvar = () => { try { localStorage.setItem("tarefas", JSON.stringify(tarefas)); } catch (e) {} };
+  const aviso = msg => { $("aviso").textContent = msg; setTimeout(() => { $("aviso").textContent = ""; }, 4000); };
+  const hoje = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  const fmt = s => { const p = s.split("-"); return p[2] + "/" + p[1] + "/" + p[0]; };
+  const rotulo = { alta: "Prioridade alta", media: "Prioridade média", baixa: "Prioridade baixa" };
+
+  CATS.forEach(c => {
+    $("cat").add(new Option(c, c));
+    $("catFiltro").add(new Option(c, c));
+  });
+  $("catFiltro").insertBefore(new Option("Todas as categorias", "todas"), $("catFiltro").firstChild);
+  $("catFiltro").value = "todas";
+  $("cat").value = "Outros";
+
+  function span(cls, texto) { const s = document.createElement("span"); if (cls) s.className = cls; s.textContent = texto; return s; }
+
+  function desenhar() {
+    const lista = $("lista");
+    lista.innerHTML = "";
+    const chave = t => t.data || "9999-99-99";
+    let v = tarefas.filter(t =>
+      (filtro === "todas" || (filtro === "pendentes" ? !t.feita : t.feita)) &&
+      (catFiltro === "todas" || t.cat === catFiltro));
+    if (ordem === "prazo") v.sort((a, b) => chave(a) < chave(b) ? -1 : chave(a) > chave(b) ? 1 : 0);
+    if (ordem === "prioridade") v.sort((a, b) => PRIO[a.prio] - PRIO[b.prio]);
+
+    if (!v.length) {
+      const li = document.createElement("li");
+      li.style.borderLeftColor = "transparent";
+      li.appendChild(span("vazio", tarefas.length ? "Nenhuma tarefa neste filtro." : "Nenhuma tarefa ainda. Escreva a primeira acima."));
+      lista.appendChild(li);
+    }
+
+    v.forEach(t => {
+      const li = document.createElement("li");
+      li.className = "p-" + t.prio + (t.feita ? " done" : "");
+      li.title = rotulo[t.prio];
+
+      const cx = document.createElement("input");
+      cx.type = "checkbox"; cx.checked = t.feita;
+      cx.setAttribute("aria-label", "Marcar como feita");
+      cx.onchange = () => { t.feita = cx.checked; t.feitaEm = t.feita ? Date.now() : null; salvar(); desenhar(); };
+
+      const corpo = document.createElement("div");
+      corpo.className = "corpo";
+      if (editando === t.id) {
+        const campo = document.createElement("input");
+        campo.type = "text"; campo.value = t.texto;
+        campo.setAttribute("aria-label", "Editar tarefa");
+        campo.onkeydown = e => {
+          if (e.key === "Enter") { const x = campo.value.trim(); if (x) t.texto = x; editando = null; salvar(); desenhar(); }
+          else if (e.key === "Escape") { editando = null; desenhar(); }
+        };
+        corpo.appendChild(campo);
+        setTimeout(() => campo.focus(), 0);
+      } else {
+        corpo.appendChild(span("txt", t.texto));
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.appendChild(span("", t.cat));
+        meta.appendChild(span("", rotulo[t.prio]));
+        if (t.data) {
+          const atrasada = !t.feita && t.data < hoje();
+          meta.appendChild(span(atrasada ? "atrasada" : "", (atrasada ? "Atrasada: " : "Prazo: ") + fmt(t.data)));
+        }
+        corpo.appendChild(meta);
+      }
+
+      const ed = document.createElement("button");
+      ed.className = "acao"; ed.textContent = "Editar";
+      ed.onclick = () => { editando = t.id; desenhar(); };
+      const del = document.createElement("button");
+      del.className = "acao"; del.textContent = "Apagar";
+      del.onclick = () => { tarefas = tarefas.filter(x => x.id !== t.id); salvar(); desenhar(); };
+
+      li.append(cx, corpo, ed, del);
+      lista.appendChild(li);
+    });
+
+    const abertas = tarefas.filter(t => !t.feita).length;
+    const semana = tarefas.filter(t => t.feita && t.feitaEm && Date.now() - t.feitaEm < 7 * 864e5).length;
+    $("contagem").textContent = tarefas.length ? abertas + " de " + tarefas.length + " pendentes" : "";
+    $("semana").textContent = semana ? semana + (semana === 1 ? " feita" : " feitas") + " nos últimos 7 dias" : "";
+    $("limpar").hidden = !tarefas.some(t => t.feita);
+  }
+
+  $("form").onsubmit = e => {
+    e.preventDefault();
+    const texto = $("texto").value.trim();
+    if (!texto) return;
+    tarefas.push(normalizar({ texto, data: $("data").value, prio: $("prio").value, cat: $("cat").value }, 0));
+    $("texto").value = ""; $("data").value = "";
+    salvar(); desenhar();
+  };
+
+  $("filtros").onclick = e => {
+    const f = e.target.getAttribute("data-f");
+    if (!f) return;
+    filtro = f;
+    $("filtros").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.f === f ? "true" : "false"));
+    desenhar();
+  };
+  $("catFiltro").onchange = e => { catFiltro = e.target.value; desenhar(); };
+  $("ordem").onchange = e => { ordem = e.target.value; desenhar(); };
+  $("limpar").onclick = () => { tarefas = tarefas.filter(t => !t.feita); salvar(); desenhar(); };
+
+  $("exportar").onclick = () => {
+    const blob = new Blob([JSON.stringify(tarefas, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "tarefas-" + hoje() + ".json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    aviso("Backup exportado.");
+  };
+  $("importar").onclick = () => $("arquivo").click();
+  $("arquivo").onchange = e => {
+    const arq = e.target.files[0];
+    if (!arq) return;
+    const leitor = new FileReader();
+    leitor.onload = () => {
+      try {
+        const dados = JSON.parse(leitor.result);
+        if (!Array.isArray(dados)) throw new Error("formato");
+        const novos = dados.filter(t => t && typeof t.texto === "string").map(normalizar)
+          .filter(n => !tarefas.some(t => t.id === n.id));
+        tarefas = tarefas.concat(novos);
+        salvar(); desenhar();
+        aviso(novos.length + " tarefas importadas.");
+      } catch (err) {
+        aviso("Não foi possível ler esse arquivo. Escolha um backup exportado por este app.");
+      }
+      $("arquivo").value = "";
+    };
+    leitor.readAsText(arq);
+  };
+
+  desenhar();
+</script>
+</body>
+</html>
