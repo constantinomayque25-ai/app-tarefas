@@ -13,7 +13,7 @@
     --bg:#f5f5f7; --w1:#dbe7ff; --w2:#ffe3ec; --card:rgba(255,255,255,.72); --solid:#fff; --solid-t:rgba(255,255,255,.6);
     --ink:#1d1d1f; --muted:#6e6e73; --line:rgba(60,60,67,.16); --fill:rgba(118,118,128,.12);
     --accent:#007aff; --done:#34c759; --late:#ff3b30;
-    --shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 40px rgba(0,0,0,.10); color-scheme:light;
+    --shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 40px rgba(0,0,0,.10); --e:1.5; color-scheme:light;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg:#000; --w1:#10213f; --w2:#2a1424; --card:rgba(44,44,46,.72); --solid:#1c1c1e; --solid-t:rgba(28,28,30,.6);
@@ -28,25 +28,52 @@
   main.janela { width:100%; max-width:640px; }
   .conteudo { padding:0; }
   h1 { font-size:2.1rem; font-weight:700; margin:0 0 4px; letter-spacing:-.03em; }
-  h2 { font-size:1.05rem; font-weight:600; margin:24px 0 10px; }
+  h2 { font-size:1.05rem; font-weight:600; margin:calc(var(--e) * 24px) 0 calc(var(--e) * 10px); }
   .sub { margin:0 0 20px; color:var(--muted); }
   button, select { font:inherit; } button { cursor:pointer; border:0; border-radius:10px; transition:background .15s, opacity .15s; }
   :focus-visible { outline:3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset:2px; }
   input[type=text], input[type=date], select { padding:10px 12px; border:0; border-radius:10px; background:var(--fill); color:var(--ink); }
   input[type=text]:focus, input[type=date]:focus, select:focus { outline:3px solid color-mix(in srgb, var(--accent) 45%, transparent); }
   .abas, .filtros { display:flex; gap:2px; padding:2px; background:var(--fill); border-radius:10px; }
-  .abas { margin-bottom:22px; } .filtros { flex-basis:100%; }
+  .abas { margin-bottom:calc(var(--e) * 22px); } .filtros { flex-basis:100%; }
   .abas button, .filtros button { flex:1; padding:7px 12px; background:transparent; color:var(--ink); border-radius:8px; font-size:.92rem; }
   .abas button[aria-selected=true], .filtros button[aria-pressed=true] { background:var(--solid); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.14); }
-  form { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  form { display:flex; flex-wrap:wrap; gap:calc(var(--e) * 8px); margin-bottom:calc(var(--e) * 16px); align-items:flex-end; }
+  .campo { display:flex; flex-direction:column; gap:6px; flex:1 1 140px; min-width:0; }
+  .campo label { font-size:.78rem; font-weight:500; color:var(--muted); margin:0; padding-left:2px; }
+  .campo input, .campo select { width:100%; height:42px; }
+  .add { height:42px; }
   #texto { flex:1 1 100%; padding:13px 14px; font-size:1rem; }
-  .add { margin-left:auto; padding:10px 20px; background:var(--accent); color:#fff; font-weight:600; } .add:hover { opacity:.88; }
-  .barra { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:14px; } .barra select { flex:1 1 160px; }
+  .campo[hidden] { display:none; } .obs-campo { flex:1 1 100%; }
+  .obs-bt { flex:1 1 100%; text-align:left; margin-top:calc(var(--e) * -4px); padding-left:2px; }
+  .campo textarea, li textarea { width:100%; padding:10px 12px; border:0; border-radius:10px; background:var(--fill); color:var(--ink); font:inherit; resize:vertical; min-height:68px; }
+  .obs { font-size:.9rem; color:var(--muted); white-space:pre-wrap; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    cursor:pointer; margin-top:calc(var(--e) * 3px); padding-left:10px; border-left:2px solid var(--line); }
+  .obs.aberta { display:block; -webkit-line-clamp:unset; } li.done .obs { opacity:.7; }
+  .pequeno { padding:7px 14px; font-size:.9rem; }
+  .edit-grade { display:flex; flex-wrap:wrap; gap:10px; margin:8px 0; } .edit-grade .campo { flex:1 1 130px; }
+  .corpo > .campo { flex:0 0 auto; }
+  li .campo { margin-top:6px; } li .campo select, li .campo input, li .campo textarea { margin:0; }
+  .est { appearance:none; -webkit-appearance:none; border:0; border-radius:999px; padding:3px 24px 3px 10px; font-size:.78rem; font-weight:600; cursor:pointer; margin:0; width:auto;
+    background-color:color-mix(in srgb, var(--c) 16%, transparent); color:var(--c);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 8px center; }
+  li select.est { margin:0; padding:3px 24px 3px 10px; width:auto; }
+  .e0 { --c:#8e8e93; } .e1 { --c:var(--accent); } .e2 { --c:#ff9500; } .e3 { --c:var(--done); }
+  .estrow { display:flex; align-items:center; gap:12px; margin-top:calc(var(--e) * 3px); flex-wrap:wrap; }
+  .prog { display:flex; gap:3px; flex:0 0 110px; }
+  .prog i { flex:1; height:4px; border-radius:2px; background:var(--line); } .prog i.on { background:var(--c); }
+  .cat-bloco { display:flex; flex-direction:column; gap:6px; padding-bottom:12px; border-bottom:1px solid var(--line); }
+  .est-rot { font-size:.78rem; color:var(--muted); }
+  .est-linha { display:flex; gap:8px; align-items:flex-start; }
+  .est-linha textarea { flex:1; padding:9px 12px; border:0; border-radius:10px; background:var(--fill); color:var(--ink); font:inherit; font-size:.9rem; resize:vertical; min-height:62px; } .est-linha input[type=text] { flex:1; padding:9px 12px; font-size:.9rem; } .est-linha select { width:150px; padding:9px 10px; border:0; border-radius:10px; background:var(--fill); color:var(--ink); }
+  .add { margin-left:auto; padding:11px 24px; background:var(--accent); color:#fff; font-weight:600; } .add:hover { opacity:.88; }
+  .barra { display:flex; flex-wrap:wrap; gap:calc(var(--e) * 8px); align-items:center; margin-bottom:calc(var(--e) * 14px); } .barra select { flex:1 1 160px; }
   ul { list-style:none; margin:0; padding:0; background:var(--solid); border-radius:12px; overflow:hidden; box-shadow:0 0 0 1px var(--line); }
-  li { display:flex; align-items:center; gap:12px; padding:13px 16px; border-bottom:1px solid var(--line); }
+  li { display:flex; align-items:center; gap:calc(var(--e) * 12px); padding:calc(var(--e) * 13px) calc(var(--e) * 16px); border-bottom:1px solid var(--line); }
   li:last-child { border-bottom:0; }
-  .corpo { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; } .txt { overflow-wrap:anywhere; }
-  .meta { display:flex; flex-wrap:wrap; gap:10px; font-size:.82rem; color:var(--muted); } .atrasada { color:var(--late); font-weight:600; }
+  .corpo { flex:1; min-width:0; display:flex; flex-direction:column; gap:calc(var(--e) * 3px); } .txt { overflow-wrap:anywhere; font-size:1.02rem; line-height:1.35; }
+  .meta { display:flex; flex-wrap:wrap; gap:calc(var(--e) * 4px) calc(var(--e) * 10px); font-size:.82rem; color:var(--muted); } .atrasada { color:var(--late); font-weight:600; }
   li.done .txt { color:var(--muted); text-decoration:line-through; }
   li input[type=checkbox] { appearance:none; -webkit-appearance:none; width:22px; height:22px; flex:none; margin:0; border-radius:50%;
     border:2px solid var(--muted); background:transparent center/14px no-repeat; cursor:pointer; transition:background-color .15s; }
@@ -54,19 +81,19 @@
   li input[type=checkbox]:checked { background-color:var(--done); border-color:var(--done);
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
   li input[type=text] { width:100%; padding:8px 10px; }
-  .acao { background:transparent; color:var(--accent); padding:4px 8px; font-size:.9rem; } .acao:last-of-type { color:var(--late); } .acao:hover { opacity:.7; }
+  .acao { background:transparent; color:var(--accent); padding:calc(var(--e) * 5px) calc(var(--e) * 8px); font-size:.9rem; } .acao:last-of-type { color:var(--late); } .acao:hover { opacity:.7; }
   .vazio { padding:30px 16px; text-align:center; color:var(--muted); display:block; }
-  .rodape { margin-top:14px; display:flex; flex-wrap:wrap; gap:6px 16px; align-items:center; color:var(--muted); font-size:.9rem; }
+  .rodape { margin-top:calc(var(--e) * 14px); display:flex; flex-wrap:wrap; gap:calc(var(--e) * 6px) calc(var(--e) * 16px); align-items:center; color:var(--muted); font-size:.9rem; }
   .esp { margin-left:auto; } .link { background:transparent; color:var(--accent); padding:4px; } .link:hover { opacity:.7; }
   #aviso { margin:8px 0 0; font-size:.9rem; color:var(--done); min-height:1.2em; }
-  .cards { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .cards { display:grid; grid-template-columns:repeat(2,1fr); gap:calc(var(--e) * 10px); }
   .stat, .caixa { background:var(--solid); border-radius:14px; padding:16px; box-shadow:0 0 0 1px var(--line); }
   .stat b { display:block; font-size:2rem; font-weight:700; letter-spacing:-.03em; } .stat span { color:var(--muted); font-size:.88rem; }
   svg { width:100%; height:auto; display:block; } .bar { fill:var(--accent); } .lbl { fill:var(--muted); font-size:11px; } .ax { stroke:var(--line); }
-  .hb { display:grid; grid-template-columns:80px 1fr 44px; align-items:center; gap:10px; margin:10px 0; font-size:.9rem; }
+  .hb { display:grid; grid-template-columns:120px 1fr 44px; align-items:center; gap:10px; margin:10px 0; font-size:.9rem; }
   .trilho { height:8px; background:var(--fill); border-radius:999px; overflow:hidden; } .trilho div { height:100%; background:var(--done); border-radius:999px; }
   .hb b { text-align:right; font-weight:600; }
-  .dia { margin:20px 0 8px; font-weight:600; } .dia span { color:var(--muted); font-weight:400; font-size:.9rem; }
+  .dia { margin:calc(var(--e) * 20px) 0 calc(var(--e) * 8px); font-weight:600; } .dia span { color:var(--muted); font-weight:400; font-size:.9rem; }
   .hora { color:var(--muted); font-size:.85rem; min-width:42px; font-variant-numeric:tabular-nums; }
   #fundo { position:fixed; inset:0; z-index:-1; overflow:hidden; }
   #fundo video, #fundo img { width:100%; height:100%; object-fit:cover; transform:scale(1.15); filter:blur(var(--desfoque,18px)) saturate(1.2); }
@@ -76,11 +103,29 @@
   body.com-fundo main.janela { background:var(--card); -webkit-backdrop-filter:saturate(180%) blur(30px); backdrop-filter:saturate(180%) blur(30px); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); }
   body.com-fundo .conteudo { padding:24px; }
   body.com-fundo ul, body.com-fundo .stat, body.com-fundo .caixa { background:var(--solid-t); }
-  .marca { display:flex; align-items:center; gap:14px; margin-bottom:20px; } .marca h1, .marca .sub { margin:0; }
+  .marca { display:flex; align-items:center; gap:14px; margin-bottom:calc(var(--e) * 20px); }
+  .rod2 { margin-top:calc(var(--e) * 26px); padding-top:calc(var(--e) * 14px); border-top:1px solid var(--line); } .marca h1, .marca .sub { margin:0; }
   .marca svg { width:56px; height:56px; flex:none; filter:drop-shadow(0 3px 8px rgba(0,122,255,.35)); }
   .desf[hidden] { display:none; }
   .desf { display:flex; align-items:center; gap:6px; } .desf input { width:90px; accent-color:var(--accent); }
-  @media (max-width:480px) { body { padding:16px 10px; } }
+  li select { padding:8px 10px; border:0; border-radius:10px; background:var(--fill); color:var(--ink); margin-top:6px; width:fit-content; }
+  dialog#catDlg { width:min(580px,94vw); max-height:90vh; border:0; border-radius:16px; padding:0; background:var(--solid); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35); }
+  dialog#catDlg::backdrop { background:rgba(0,0,0,.35); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  .caixaDlg { padding:22px; display:flex; flex-direction:column; gap:12px; max-height:90vh; overflow:auto; }
+  .caixaDlg h2 { margin:0; font-size:1.3rem; } .caixaDlg p { margin:0; color:var(--muted); font-size:.92rem; }
+  .cat-linha { display:flex; gap:8px; align-items:center; } .cat-linha input[type=text] { flex:1; padding:10px 12px; }
+  .sug-linha { display:grid; grid-template-columns:1fr 160px; gap:8px; align-items:center; font-size:.92rem; padding:6px 0; border-bottom:1px solid var(--line); }
+  .sug-linha select { margin:0; width:100%; }
+  .fixa { position:sticky; bottom:-22px; background:var(--solid); padding:12px 0 2px; }
+  .bt { padding:10px 16px; background:var(--accent); color:#fff; font-weight:600; border-radius:10px; } .bt2 { padding:10px 16px; background:var(--fill); color:var(--ink); border-radius:10px; }
+  .aviso-cat { padding:10px 12px; border-radius:10px; background:color-mix(in srgb, var(--accent) 14%, transparent); font-size:.92rem; }
+  @media (max-width:480px) {
+    body { padding:16px 10px; }
+    li { flex-wrap:wrap; row-gap:0; }
+    li .corpo { flex:1 1 calc(100% - 44px); }
+    li button.acao:first-of-type { margin-left:auto; }
+    li button.acao { padding:6px 10px; }
+  }
   @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
 </style>
 </head>
@@ -102,11 +147,13 @@
   <section id="vTarefas">
     <form id="form">
       <input type="text" id="texto" placeholder="O que você precisa fazer?" aria-label="Nova tarefa" autocomplete="off">
-      <input type="date" id="data" aria-label="Prazo (opcional)">
-      <select id="prio" aria-label="Prioridade">
-        <option value="alta">Prioridade alta</option><option value="media" selected>Prioridade média</option><option value="baixa">Prioridade baixa</option>
-      </select>
-      <select id="cat" aria-label="Categoria"></select>
+      <button type="button" class="link obs-bt" id="obsBt">+ Adicionar observação</button>
+      <div class="campo obs-campo" id="obsCampo" hidden><label for="obs">Observação (opcional)</label><textarea id="obs" rows="3" maxlength="1000" placeholder="Detalhes, números, o que falta..."></textarea></div>
+      <div class="campo"><label for="data">Prazo (opcional)</label><input type="date" id="data"></div>
+      <div class="campo"><label for="prio">Prioridade</label><select id="prio">
+        <option value="alta">Alta</option><option value="media" selected>Média</option><option value="baixa">Baixa</option>
+      </select></div>
+      <div class="campo"><label for="cat">Categoria</label><select id="cat"></select></div>
       <button class="add" type="submit">Adicionar</button>
     </form>
     <div class="barra">
@@ -116,6 +163,7 @@
         <button type="button" data-f="feitas" aria-pressed="false">Feitas</button>
       </div>
       <select id="catFiltro" aria-label="Filtrar por categoria"></select>
+      <select id="estFiltro" aria-label="Filtrar por estágio" hidden></select>
       <select id="ordem" aria-label="Ordenar por">
         <option value="criacao">Ordem de criação</option><option value="prazo">Ordenar por prazo</option><option value="prioridade">Ordenar por prioridade</option>
       </select>
@@ -123,6 +171,7 @@
     <ul id="lista"></ul>
     <div class="rodape">
       <span id="contagem"></span><span class="esp"></span>
+      <button class="link" id="gerCats" type="button">Gerenciar categorias</button>
       <button class="link" id="limpar" type="button">Limpar concluídas</button>
     </div>
   </section>
@@ -137,8 +186,9 @@
 
   <section id="vHist" hidden><div id="historico"></div></section>
 
-  <div class="rodape" style="margin-top:24px">
+  <div class="rodape rod2">
     <span class="esp"></span>
+    <button class="link" id="espBtn" type="button" title="Muda o espaço entre os elementos">Espaçamento: Confortável</button>
     <button class="link" id="fundoBtn" type="button">Escolher fundo</button>
     <button class="link" id="fundoTira" type="button" hidden>Remover fundo</button>
     <label class="desf" id="desfLabel" hidden>Desfoque <input type="range" id="desf" min="0" max="40" value="18" aria-label="Quantidade de desfoque do fundo"></label>
@@ -151,17 +201,51 @@
   </div>
 </main>
 
+<dialog id="catDlg"><div class="caixaDlg" id="catCorpo"></div></dialog>
+
 <script>
   const $ = id => document.getElementById(id);
-  const CATS = ["Trabalho", "Casa", "Estudos", "Outros"];
+  const CATS_PADRAO = ["Compras", "Veículos", "Documentos", "Financeiro", "Sistemas", "Medição", "Fazeres"];
+  let CATS = CATS_PADRAO.slice();
+  try { const c = JSON.parse(localStorage.getItem("categorias") || "null"); if (Array.isArray(c)) { const l = c.filter(x => typeof x === "string" && x.trim()); if (l.length) CATS = l; } } catch (e) {}
+  const salvarCats = () => { try { localStorage.setItem("categorias", JSON.stringify(CATS)); } catch (e) {} };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  // ---- estágios: o processo de cada categoria (o último estágio = concluída) ----
+  const MODELOS = {
+    "Compras": ["A comprar", "Cotando", "Aprovação", "Pedido feito", "Aguardando entrega", "Recebido e conferido"],
+    "Veículos": ["Identificado", "Em análise", "Orçamento ou providência", "Em execução", "Aguardando retorno", "Concluída"],
+    "Multas (CTB)": ["Autuação recebida", "Condutor indicado ou defesa", "Aguardando penalidade", "Penalidade: pagar ou recorrer", "Em recurso", "Encerrada"],
+    "Documentos": ["A providenciar", "Em elaboração", "Em conferência", "Enviado ou protocolado", "Aguardando retorno", "Concluído e arquivado"],
+    "MTR e resíduos": ["A emitir", "Emitido", "Transporte atestado", "Recebimento atestado", "CDF emitido", "Arquivado"],
+    "Financeiro": ["A levantar", "Em conferência", "Com divergência", "Ajustado e validado", "Documentado e arquivado"],
+    "Sistemas": ["A analisar", "Em execução", "Aguardando fornecedor", "Em teste", "Funcionando"],
+    "Medição": ["A levantar", "Em conferência", "Enviada ao cliente", "Aprovada pelo cliente", "Faturada", "Concluída"],
+    "Geral": ["A fazer", "Em andamento", "Aguardando", "Concluída"]
+  };
+  const PADRAO_EST = { "Compras": MODELOS["Compras"], "Veículos": MODELOS["Veículos"], "Documentos": MODELOS["Documentos"], "Financeiro": MODELOS["Financeiro"],
+    "Sistemas": MODELOS["Sistemas"], "Medição": MODELOS["Medição"], "Fazeres": MODELOS["Geral"] };
+  let ESTAGIOS = {};
+  try { const e = JSON.parse(localStorage.getItem("estagios") || "null"); if (e && typeof e === "object" && !Array.isArray(e)) ESTAGIOS = e; } catch (e) {}
+  const salvarEst = () => { try { localStorage.setItem("estagios", JSON.stringify(ESTAGIOS)); } catch (e) {} };
+  const estagiosDe = cat => { const l = ESTAGIOS[cat] || PADRAO_EST[cat]; return (Array.isArray(l) && l.length >= 2) ? l : MODELOS["Geral"]; };
+  function estagioDe(t) { const l = estagiosDe(t.cat); if (t.estagio && l.includes(t.estagio)) return t.estagio; return t.feita ? l[l.length - 1] : l[0]; }
+  function irPara(t, nome) {
+    const l = estagiosDe(t.cat), fim = nome === l[l.length - 1]; t.estagio = nome;
+    if (fim && !t.feita) { t.feita = true; t.feitaEm = Date.now(); }
+    if (!fim && t.feita) { t.feita = false; t.feitaEm = null; }
+    salvar(); desenhar();
+  }
+  const corEst = (i, n) => i === 0 ? "e0" : i === n - 1 ? "e3" : (i / (n - 1) < 0.5 ? "e1" : "e2");
   const PRIO = { alta: 0, media: 1, baixa: 2 };
   const rotulo = { alta: "Prioridade alta", media: "Prioridade média", baixa: "Prioridade baixa" };
-  let tarefas = [], filtro = "todas", catFiltro = "todas", ordem = "criacao", editando = null, aba = "tarefas";
+  let tarefas = [], estFiltro = "todos", filtro = "todas", catFiltro = "todas", ordem = "criacao", editando = null, aba = "tarefas";
 
   function normalizar(t, i) {
     return { id: t.id || Date.now() + i, texto: String(t.texto), feita: !!t.feita, data: t.data || "",
-      prio: t.prio in PRIO ? t.prio : "media", cat: CATS.includes(t.cat) ? t.cat : "Outros",
-      feitaEm: t.feitaEm || null, arquivada: !!t.arquivada };
+      prio: t.prio in PRIO ? t.prio : "media", cat: (typeof t.cat === "string" && t.cat.trim()) ? t.cat.trim() : "Fazeres",
+      feitaEm: t.feitaEm || null, arquivada: !!t.arquivada,
+      obs: typeof t.obs === "string" ? t.obs.trim().slice(0, 1000) : "",
+      estagio: typeof t.estagio === "string" ? t.estagio : "" };
   }
   try { tarefas = JSON.parse(localStorage.getItem("tarefas") || "[]"); } catch (e) { tarefas = []; }
   tarefas = tarefas.filter(t => t && typeof t.texto === "string").map(normalizar);
@@ -173,15 +257,41 @@
   const fmt = s => { const p = s.split("-"); return p[2] + "/" + p[1] + "/" + p[0]; };
   const span = (cls, txt) => { const s = document.createElement("span"); if (cls) s.className = cls; s.textContent = txt; return s; };
 
-  CATS.forEach(c => { $("cat").add(new Option(c, c)); $("catFiltro").add(new Option(c, c)); });
-  $("catFiltro").insertBefore(new Option("Todas as categorias", "todas"), $("catFiltro").firstChild);
-  $("catFiltro").value = "todas"; $("cat").value = "Outros";
+  const catsEmUso = () => { const s = new Set(CATS); tarefas.forEach(t => s.add(t.cat)); return [...s]; };
+  function montarSeletores() {
+    const sel = $("cat"), fil = $("catFiltro"), vs = sel.value, vf = fil.value;
+    sel.innerHTML = ""; fil.innerHTML = "";
+    CATS.forEach(c => sel.add(new Option(c, c)));
+    fil.add(new Option("Todas as categorias", "todas"));
+    catsEmUso().forEach(c => fil.add(new Option(CATS.includes(c) ? c : c + " (antiga)", c)));
+    sel.value = CATS.includes(vs) ? vs : (CATS.includes("Fazeres") ? "Fazeres" : CATS[0]);
+    fil.value = [...fil.options].some(o => o.value === vf) ? vf : "todas"; catFiltro = fil.value;
+    montarEstFiltro();
+  }
+  function montarEstFiltro() {
+    const fe = $("estFiltro"); fe.innerHTML = "";
+    if (catFiltro === "todas") { fe.hidden = true; estFiltro = "todos"; return; }
+    fe.hidden = false; fe.add(new Option("Todos os estágios", "todos"));
+    estagiosDe(catFiltro).forEach(n => fe.add(new Option(n, n)));
+    if (![...fe.options].some(o => o.value === estFiltro)) estFiltro = "todos";
+    fe.value = estFiltro;
+  }
+  montarSeletores();
 
+  function pillEstagio(t) {
+    const l = estagiosDe(t.cat), atual = estagioDe(t), i = l.indexOf(atual), s = document.createElement("select");
+    s.className = "est " + corEst(i, l.length); s.setAttribute("aria-label", "Estágio da tarefa");
+    l.forEach(n => s.add(new Option(n, n))); s.value = atual; s.onchange = () => irPara(t, s.value); return s;
+  }
+  function barraEst(t) {
+    const l = estagiosDe(t.cat), i = l.indexOf(estagioDe(t)), b = document.createElement("div"); b.className = "prog " + corEst(i, l.length);
+    b.title = "Estágio " + (i + 1) + " de " + l.length; l.forEach((n, k) => { const x = document.createElement("i"); if (k <= i) x.className = "on"; b.appendChild(x); }); return b;
+  }
   function desenharTarefas() {
     const lista = $("lista"); lista.innerHTML = "";
     const ativas = tarefas.filter(t => !t.arquivada);
     const chave = t => t.data || "9999-99-99";
-    let v = ativas.filter(t => (filtro === "todas" || (filtro === "pendentes" ? !t.feita : t.feita)) && (catFiltro === "todas" || t.cat === catFiltro));
+    let v = ativas.filter(t => (filtro === "todas" || (filtro === "pendentes" ? !t.feita : t.feita)) && (catFiltro === "todas" || t.cat === catFiltro) && (estFiltro === "todos" || estagioDe(t) === estFiltro));
     if (ordem === "prazo") v.sort((a, b) => chave(a) < chave(b) ? -1 : chave(a) > chave(b) ? 1 : 0);
     if (ordem === "prioridade") v.sort((a, b) => PRIO[a.prio] - PRIO[b.prio]);
     if (!v.length) {
@@ -194,28 +304,50 @@
       li.className = "p-" + t.prio + (t.feita ? " done" : ""); li.title = rotulo[t.prio];
       const cx = document.createElement("input"); cx.type = "checkbox"; cx.checked = t.feita;
       cx.setAttribute("aria-label", "Marcar como feita");
-      cx.onchange = () => { t.feita = cx.checked; t.feitaEm = t.feita ? Date.now() : null; salvar(); desenhar(); };
+      cx.onchange = () => { const l = estagiosDe(t.cat); t.feita = cx.checked; t.feitaEm = t.feita ? Date.now() : null; t.estagio = t.feita ? l[l.length - 1] : l[Math.max(0, l.length - 2)]; salvar(); desenhar(); };
       const corpo = document.createElement("div"); corpo.className = "corpo";
       if (editando === t.id) {
-        const campo = document.createElement("input"); campo.type = "text"; campo.value = t.texto;
-        campo.setAttribute("aria-label", "Editar tarefa");
-        campo.onkeydown = e => {
-          if (e.key === "Enter") { const x = campo.value.trim(); if (x) t.texto = x; editando = null; salvar(); desenhar(); }
-          else if (e.key === "Escape") { editando = null; desenhar(); }
+        const campo = document.createElement("input"); campo.type = "text"; campo.value = t.texto; campo.maxLength = 200;
+        const mkc = (rot, ctl) => { const d = document.createElement("div"); d.className = "campo"; const lb = document.createElement("label"); lb.textContent = rot; ctl.setAttribute("aria-label", rot); d.append(lb, ctl); return d; };
+        const dt = document.createElement("input"); dt.type = "date"; dt.value = t.data || "";
+        const pr = document.createElement("select"); [["alta", "Alta"], ["media", "Média"], ["baixa", "Baixa"]].forEach(([v, n]) => pr.add(new Option(n, v))); pr.value = t.prio;
+        const sc = document.createElement("select"); catsEmUso().forEach(c => sc.add(new Option(CATS.includes(c) ? c : c + " (antiga)", c))); sc.value = t.cat;
+        const se = document.createElement("select");
+        const montarEst = () => { se.innerHTML = ""; const l = estagiosDe(sc.value); l.forEach(n => se.add(new Option(n, n))); se.value = sc.value === t.cat ? estagioDe(t) : l[0]; };
+        montarEst(); sc.onchange = montarEst;
+        const ob = document.createElement("textarea"); ob.rows = 3; ob.maxLength = 1000; ob.value = t.obs || ""; ob.placeholder = "Detalhes, números, o que falta...";
+        const gravar = () => {
+          const x = campo.value.trim(); if (x) t.texto = x;
+          t.data = dt.value; t.prio = pr.value; t.cat = sc.value; t.obs = ob.value.trim().slice(0, 1000);
+          const l = estagiosDe(t.cat), est = l.includes(se.value) ? se.value : l[0], fim = est === l[l.length - 1]; t.estagio = est;
+          if (fim && !t.feita) { t.feita = true; t.feitaEm = Date.now(); }
+          if (!fim && t.feita) { t.feita = false; t.feitaEm = null; }
+          editando = null; salvar(); montarSeletores(); desenhar();
         };
-        corpo.appendChild(campo); setTimeout(() => campo.focus(), 0);
+        const cancelar = () => { editando = null; desenhar(); };
+        const tecla = e => { if (e.key === "Enter") gravar(); else if (e.key === "Escape") cancelar(); };
+        campo.onkeydown = tecla; dt.onkeydown = tecla; [pr, sc, se].forEach(s => { s.onkeydown = e => { if (e.key === "Escape") cancelar(); }; });
+        ob.onkeydown = e => { if (e.key === "Escape") cancelar(); else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) gravar(); };
+        const bs = document.createElement("button"); bs.type = "button"; bs.className = "bt pequeno"; bs.textContent = "Salvar"; bs.onclick = gravar;
+        const bc = document.createElement("button"); bc.type = "button"; bc.className = "bt2 pequeno"; bc.textContent = "Cancelar"; bc.onclick = cancelar;
+        const bl = document.createElement("div"); bl.style.cssText = "display:flex;gap:8px;margin-top:6px"; bl.append(bs, bc);
+        const grade = document.createElement("div"); grade.className = "edit-grade"; grade.append(mkc("Prazo", dt), mkc("Prioridade", pr), mkc("Categoria", sc), mkc("Estágio", se));
+        corpo.append(mkc("Tarefa", campo), grade, mkc("Observação", ob), bl); setTimeout(() => campo.focus(), 0);
       } else {
         corpo.appendChild(span("txt", t.texto));
         const meta = document.createElement("div"); meta.className = "meta";
         meta.append(span("", t.cat), span("", rotulo[t.prio]));
         if (t.data) { const at = !t.feita && t.data < hoje(); meta.appendChild(span(at ? "atrasada" : "", (at ? "Atrasada: " : "Prazo: ") + fmt(t.data))); }
-        corpo.appendChild(meta);
+        const le = document.createElement("div"); le.className = "estrow"; le.append(pillEstagio(t), barraEst(t));
+        corpo.appendChild(le); corpo.appendChild(meta);
+        if (t.obs) { const o = span("obs", t.obs); o.title = "Clique para ver tudo ou recolher"; o.onclick = () => o.classList.toggle("aberta"); corpo.appendChild(o); }
       }
       const ed = document.createElement("button"); ed.className = "acao"; ed.textContent = "Editar";
       ed.onclick = () => { editando = t.id; desenhar(); };
       const del = document.createElement("button"); del.className = "acao"; del.textContent = "Apagar";
       del.onclick = () => { tarefas = tarefas.filter(x => x.id !== t.id); salvar(); desenhar(); };
-      li.append(cx, corpo, ed, del); lista.appendChild(li);
+      if (editando === t.id) li.append(cx, corpo); else li.append(cx, corpo, ed, del);
+      lista.appendChild(li);
     });
     const abertas = ativas.filter(t => !t.feita).length;
     $("contagem").textContent = ativas.length ? abertas + " de " + ativas.length + " pendentes" : "";
@@ -245,9 +377,9 @@
     });
     $("grafico").innerHTML = s + "<line class='ax' x1='0' x2='" + W + "' y1='" + base + "' y2='" + base + "'/></svg>";
 
-    $("categorias").innerHTML = CATS.map(c => {
+    $("categorias").innerHTML = catsEmUso().map(c => {
       const tt = tarefas.filter(t => t.cat === c), dd = tt.filter(t => t.feita).length;
-      return "<div class='hb'><span>" + c + "</span><div class='trilho'><div style='width:" + (tt.length ? dd / tt.length * 100 : 0) + "%'></div></div><b>" + dd + "/" + tt.length + "</b></div>";
+      return "<div class='hb'><span>" + esc(c) + "</span><div class='trilho'><div style='width:" + (tt.length ? dd / tt.length * 100 : 0) + "%'></div></div><b>" + dd + "/" + tt.length + "</b></div>";
     }).join("");
   }
 
@@ -268,6 +400,7 @@
       const li = document.createElement("li"); li.className = "p-" + t.prio;
       const corpo = document.createElement("div"); corpo.className = "corpo";
       corpo.appendChild(span("txt", t.texto)); corpo.appendChild(span("meta", t.cat));
+      if (t.obs) corpo.appendChild(span("obs aberta", t.obs));
       li.append(span("hora", new Date(t.feitaEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })), corpo);
       ul.appendChild(li);
     });
@@ -285,17 +418,20 @@
     $("abas").querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", b.dataset.a === a ? "true" : "false"));
     desenhar();
   };
+  function mostrarObs(sim) { $("obsCampo").hidden = !sim; $("obsBt").textContent = sim ? "− Esconder observação" : "+ Adicionar observação"; if (sim) $("obs").focus(); }
+  $("obsBt").onclick = () => mostrarObs($("obsCampo").hidden);
   $("form").onsubmit = e => {
     e.preventDefault(); const texto = $("texto").value.trim(); if (!texto) return;
-    tarefas.push(normalizar({ texto, data: $("data").value, prio: $("prio").value, cat: $("cat").value }, 0));
-    $("texto").value = ""; $("data").value = ""; salvar(); desenhar();
+    tarefas.push(normalizar({ texto, data: $("data").value, prio: $("prio").value, cat: $("cat").value, obs: $("obs").value }, 0));
+    $("texto").value = ""; $("data").value = ""; $("obs").value = ""; mostrarObs(false); salvar(); desenhar();
   };
   $("filtros").onclick = e => {
     const f = e.target.dataset.f; if (!f) return; filtro = f;
     $("filtros").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.f === f ? "true" : "false"));
     desenhar();
   };
-  $("catFiltro").onchange = e => { catFiltro = e.target.value; desenhar(); };
+  $("catFiltro").onchange = e => { catFiltro = e.target.value; estFiltro = "todos"; montarEstFiltro(); desenhar(); };
+  $("estFiltro").onchange = e => { estFiltro = e.target.value; desenhar(); };
   $("ordem").onchange = e => { ordem = e.target.value; desenhar(); };
   $("limpar").onclick = () => {
     const n = tarefas.filter(t => t.feita && !t.arquivada).length;
@@ -303,7 +439,7 @@
     salvar(); desenhar(); aviso(n + " tarefas saíram da lista e continuam no Histórico e no Painel.");
   };
   $("exportar").onclick = () => {
-    const blob = new Blob([JSON.stringify(tarefas, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ versao: 3, categorias: CATS, estagios: Object.fromEntries(CATS.map(c => [c, estagiosDe(c)])), tarefas }, null, 2)], { type: "application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "tarefas-" + hoje() + ".json";
     a.click(); URL.revokeObjectURL(a.href); aviso("Backup exportado.");
   };
@@ -313,14 +449,112 @@
     const leitor = new FileReader();
     leitor.onload = () => {
       try {
-        const dados = JSON.parse(leitor.result); if (!Array.isArray(dados)) throw new Error("formato");
-        const novos = dados.filter(t => t && typeof t.texto === "string").map(normalizar).filter(n => !tarefas.some(t => t.id === n.id));
-        tarefas = tarefas.concat(novos); salvar(); desenhar(); aviso(novos.length + " tarefas importadas.");
+        const dados = JSON.parse(leitor.result), lista = Array.isArray(dados) ? dados : (dados && Array.isArray(dados.tarefas) ? dados.tarefas : null); if (!lista) throw new Error("formato");
+        if (dados && Array.isArray(dados.categorias)) { dados.categorias.forEach(c => { if (typeof c === "string" && c.trim() && !CATS.includes(c.trim())) CATS.push(c.trim()); }); salvarCats(); }
+        if (dados && dados.estagios && typeof dados.estagios === "object") { Object.keys(dados.estagios).forEach(k => { const l = dados.estagios[k]; if (!ESTAGIOS[k] && !PADRAO_EST[k] && Array.isArray(l) && l.length >= 2) ESTAGIOS[k] = l.filter(x => typeof x === "string" && x.trim()).slice(0, 8); }); salvarEst(); }
+        const novos = lista.filter(t => t && typeof t.texto === "string").map(normalizar).filter(n => !tarefas.some(t => t.id === n.id));
+        tarefas = tarefas.concat(novos); salvar(); montarSeletores(); desenhar(); aviso(novos.length + " tarefas importadas.");
       } catch (err) { aviso("Não foi possível ler esse arquivo. Escolha um backup exportado por este app."); }
       $("arquivo").value = "";
     };
     leitor.readAsText(arq);
   };
+  // ---- gerenciar categorias ----
+  const REGRAS = [
+    ["Compras", /\bcompr/i], ["Medição", /medi[çc][ãa]o|\bmedir\b/i],
+    ["Sistemas", /c[âa]mera|balan[çc]a|computador|drive|\bapp\b|sistema|\bsgr\b|impressora|internet|\brede\b/i],
+    ["Financeiro", /extrato|banc[áa]ri|fatura|pagamento|boleto|cobran[çc]a|financ/i],
+    ["Documentos", /\bmtr\b|\bp\.o\.|fiscal|ordem de servi[çc]o|contrato|document/i],
+    ["Veículos", /multa|ped[áa]gio|caminh|ve[íi]culo|frota|\bcarro\b|\bmoto\b/i]
+  ];
+  const sugerir = t => { const r = REGRAS.find(([n, re]) => CATS.includes(n) && re.test(t.texto)); return r ? r[0] : (CATS.includes("Fazeres") ? "Fazeres" : CATS[0]); };
+  const mk = (tag, cls, txt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (txt !== undefined) x.textContent = txt; return x; };
+  const atualizarTudo = () => { salvarCats(); salvar(); montarSeletores(); desenhar(); };
+
+  function renomear(velho, novo) {
+    novo = novo.trim().slice(0, 24); if (!novo || novo === velho) return;
+    const i = CATS.indexOf(velho); if (i < 0) return;
+    const est = estagiosDe(velho).slice(), jaExistia = CATS.includes(novo);
+    if (jaExistia) CATS.splice(i, 1); else CATS[i] = novo;
+    delete ESTAGIOS[velho]; if (!jaExistia) ESTAGIOS[novo] = est; salvarEst();
+    tarefas.forEach(t => { if (t.cat === velho) t.cat = novo; });
+    atualizarTudo(); aviso("Categoria renomeada para " + novo + ".");
+  }
+  function apagarCat(nome) {
+    const n = tarefas.filter(t => t.cat === nome).length;
+    if (!confirm("Apagar a categoria " + nome + "?" + (n ? " As " + n + " tarefas dela continuam, mas ficam com o nome " + nome + " marcado como (antiga), até você mudar." : ""))) return;
+    CATS = CATS.filter(c => c !== nome); if (!CATS.length) CATS = ["Fazeres"];
+    delete ESTAGIOS[nome]; salvarEst();
+    atualizarTudo();
+  }
+  function definirEstagios(cat, texto) {
+    const nova = [...new Set(texto.split(/[,;\n]/).map(x => x.trim().slice(0, 30)).filter(Boolean))].slice(0, 8);
+    if (nova.length < 2) { aviso("Precisa de pelo menos 2 estágios (o primeiro e o de concluída)."); return false; }
+    const velha = estagiosDe(cat);
+    tarefas.forEach(t => {
+      if (t.cat !== cat) return;
+      const i = Math.max(0, velha.indexOf(estagioDe(t)));
+      t.estagio = t.feita ? nova[nova.length - 1] : (nova.includes(velha[i]) && nova.indexOf(velha[i]) < nova.length - 1 ? velha[i] : nova[Math.min(i, nova.length - 2)]);
+    });
+    ESTAGIOS[cat] = nova; salvarEst(); atualizarTudo(); aviso("Estágios de " + cat + " atualizados."); return true;
+  }
+  function abrirCats(previa) {
+    const c = $("catCorpo"); c.innerHTML = "";
+    c.appendChild(mk("h2", "", "Categorias"));
+    if (previa) { mostrarPrevia(c); $("catDlg").showModal ? ($("catDlg").open || $("catDlg").showModal()) : 0; return; }
+    c.appendChild(mk("p", "", "Mude o nome direto no campo e aperte Enter. Você pode criar, renomear e apagar à vontade."));
+    CATS.forEach(nome => {
+      const bloco = mk("div", "cat-bloco"), l = mk("div", "cat-linha"), campo = mk("input"); campo.type = "text"; campo.value = nome; campo.maxLength = 24; campo.setAttribute("aria-label", "Nome da categoria");
+      campo.onchange = () => { renomear(nome, campo.value); abrirCats(); };
+      const ap = mk("button", "bt2", "Apagar"); ap.onclick = () => { apagarCat(nome); abrirCats(); };
+      l.append(campo, ap);
+      const le = mk("div", "est-linha"), ie = mk("textarea"); ie.rows = 3; ie.value = estagiosDe(nome).join(", "); ie.setAttribute("aria-label", "Estágios de " + nome);
+      ie.onchange = () => { if (definirEstagios(nome, ie.value)) abrirCats(); else ie.value = estagiosDe(nome).join(", "); };
+      const sm = mk("select"); sm.setAttribute("aria-label", "Aplicar modelo de estágios a " + nome); sm.add(new Option("Usar modelo…", ""));
+      Object.keys(MODELOS).forEach(k => sm.add(new Option(k, k)));
+      sm.onchange = () => { if (sm.value) { definirEstagios(nome, MODELOS[sm.value].join(", ")); abrirCats(); } };
+      le.append(ie, sm);
+      bloco.append(l, mk("div", "est-rot", "Estágios, na ordem, separados por vírgula (clique fora do campo para salvar). O último é o de concluída."), le); c.appendChild(bloco);
+    });
+    const nl = mk("div", "cat-linha"), novo = mk("input"); novo.type = "text"; novo.placeholder = "Nova categoria"; novo.maxLength = 24;
+    const add = mk("button", "bt", "Adicionar");
+    const criar = () => { const n = novo.value.trim().slice(0, 24); if (!n) return; if (CATS.includes(n)) { aviso("Essa categoria já existe."); return; } CATS.push(n); ESTAGIOS[n] = MODELOS["Geral"].slice(); salvarEst(); atualizarTudo(); abrirCats(); };
+    add.onclick = criar; novo.onkeydown = e => { if (e.key === "Enter") criar(); };
+    nl.append(novo, add); c.appendChild(nl);
+    const velhas = tarefas.filter(t => !CATS.includes(t.cat));
+    if (velhas.length) {
+      c.appendChild(mk("div", "aviso-cat", velhas.length + " tarefas estão com uma categoria que não está na lista (" + [...new Set(velhas.map(t => t.cat))].join(", ") + ")."));
+      const sg = mk("button", "bt", "Sugerir categorias para elas"); sg.onclick = () => abrirCats(true); c.appendChild(sg);
+    }
+    const fe = mk("button", "bt2", "Fechar"); fe.onclick = () => $("catDlg").close(); c.appendChild(fe);
+    if (!$("catDlg").open) $("catDlg").showModal();
+  }
+  function mostrarPrevia(c) {
+    const velhas = tarefas.filter(t => !CATS.includes(t.cat)).sort((a, b) => (a.arquivada ? 1 : 0) - (b.arquivada ? 1 : 0));
+    c.appendChild(mk("p", "", "Estas são as sugestões. Nada muda até você clicar em Aplicar. Você pode trocar qualquer uma antes."));
+    const sels = [];
+    velhas.forEach(t => {
+      const l = mk("div", "sug-linha"), s = mk("select"); l.appendChild(mk("span", "", t.texto + (t.arquivada ? " (no histórico)" : "")));
+      CATS.forEach(n => s.add(new Option(n, n))); s.value = sugerir(t); sels.push([t, s]); l.appendChild(s); c.appendChild(l);
+    });
+    const linha = mk("div", "cat-linha fixa"), ok = mk("button", "bt", "Aplicar"), voltar = mk("button", "bt2", "Voltar");
+    ok.onclick = () => { sels.forEach(([t, s]) => { t.cat = s.value; }); atualizarTudo(); aviso(sels.length + " tarefas receberam categoria."); abrirCats(); };
+    voltar.onclick = () => abrirCats(); linha.append(ok, voltar); c.appendChild(linha);
+  }
+  $("gerCats").onclick = () => abrirCats();
+
+  // ---- espaçamento (Compacto, Confortável, Amplo), guardado neste navegador ----
+  const NIVEIS = [["Compacto", 1], ["Confortável", 1.5], ["Amplo", 2]];
+  let nivel = 1;
+  try { const n = parseInt(localStorage.getItem("espacamento"), 10); if (n >= 0 && n < NIVEIS.length) nivel = n; } catch (e) {}
+  function aplicarEsp() {
+    document.documentElement.style.setProperty("--e", NIVEIS[nivel][1]);
+    $("espBtn").textContent = "Espaçamento: " + NIVEIS[nivel][0];
+    try { localStorage.setItem("espacamento", String(nivel)); } catch (e) {}
+  }
+  $("espBtn").onclick = () => { nivel = (nivel + 1) % NIVEIS.length; aplicarEsp(); };
+  aplicarEsp();
+
   // Fundo (imagem ou vídeo) guardado no IndexedDB, com desfoque ajustável
   const BD = {
     abrir() { return new Promise((ok, erro) => { const r = indexedDB.open("tarefas-fundo", 1); r.onupgradeneeded = () => r.result.createObjectStore("f"); r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error); }); },
