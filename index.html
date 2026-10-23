@@ -51,6 +51,7 @@
     cursor:pointer; margin-top:calc(var(--e) * 3px); padding-left:10px; border-left:2px solid var(--line); }
   .obs.aberta { display:block; -webkit-line-clamp:unset; } li.done .obs { opacity:.7; }
   .pequeno { padding:7px 14px; font-size:.9rem; }
+  .bt2.perigo { color:var(--late); }
   .edit-grade { display:flex; flex-wrap:wrap; gap:10px; margin:8px 0; } .edit-grade .campo { flex:1 1 130px; }
   .corpo > .campo { flex:0 0 auto; }
   li .campo { margin-top:6px; } li .campo select, li .campo input, li .campo textarea { margin:0; }
@@ -330,7 +331,9 @@
         ob.onkeydown = e => { if (e.key === "Escape") cancelar(); else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) gravar(); };
         const bs = document.createElement("button"); bs.type = "button"; bs.className = "bt pequeno"; bs.textContent = "Salvar"; bs.onclick = gravar;
         const bc = document.createElement("button"); bc.type = "button"; bc.className = "bt2 pequeno"; bc.textContent = "Cancelar"; bc.onclick = cancelar;
-        const bl = document.createElement("div"); bl.style.cssText = "display:flex;gap:8px;margin-top:6px"; bl.append(bs, bc);
+        const be = document.createElement("button"); be.type = "button"; be.className = "bt2 pequeno perigo"; be.textContent = "Excluir"; be.style.marginLeft = "auto"; be.title = "Apagar de vez, inclusive do Histórico";
+        be.onclick = () => { if (!confirm("Excluir esta tarefa de vez? Ela também some do Histórico e não dá para desfazer.")) return; tarefas = tarefas.filter(x => x.id !== t.id); editando = null; salvar(); montarSeletores(); desenhar(); aviso("Tarefa excluída."); };
+        const bl = document.createElement("div"); bl.style.cssText = "display:flex;gap:8px;margin-top:6px"; bl.append(bs, bc, be);
         const grade = document.createElement("div"); grade.className = "edit-grade"; grade.append(mkc("Prazo", dt), mkc("Prioridade", pr), mkc("Categoria", sc), mkc("Estágio", se));
         corpo.append(mkc("Tarefa", campo), grade, mkc("Observação", ob), bl); setTimeout(() => campo.focus(), 0);
       } else {
@@ -345,7 +348,11 @@
       const ed = document.createElement("button"); ed.className = "acao"; ed.textContent = "Editar";
       ed.onclick = () => { editando = t.id; desenhar(); };
       const del = document.createElement("button"); del.className = "acao"; del.textContent = "Apagar";
-      del.onclick = () => { tarefas = tarefas.filter(x => x.id !== t.id); salvar(); desenhar(); };
+      del.onclick = () => {
+        if (t.feita && t.feitaEm) { t.arquivada = true; salvar(); desenhar(); aviso("Tirada da lista. Ela continua no Histórico."); return; }
+        if (!confirm("Esta tarefa ainda não foi concluída, então não ficaria no Histórico. Apagar mesmo?")) return;
+        tarefas = tarefas.filter(x => x.id !== t.id); salvar(); montarSeletores(); desenhar(); aviso("Tarefa apagada.");
+      };
       if (editando === t.id) li.append(cx, corpo); else li.append(cx, corpo, ed, del);
       lista.appendChild(li);
     });
@@ -402,6 +409,9 @@
       corpo.appendChild(span("txt", t.texto)); corpo.appendChild(span("meta", t.cat));
       if (t.obs) corpo.appendChild(span("obs aberta", t.obs));
       li.append(span("hora", new Date(t.feitaEm).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })), corpo);
+      const ex = document.createElement("button"); ex.className = "acao"; ex.textContent = "Excluir"; ex.title = "Apagar de vez, inclusive do Histórico";
+      ex.onclick = () => { if (!confirm("Excluir \"" + t.texto + "\" de vez? Ela some do Histórico e do Painel e não dá para desfazer.")) return; tarefas = tarefas.filter(x => x.id !== t.id); salvar(); montarSeletores(); desenhar(); aviso("Tarefa excluída."); };
+      li.append(ex);
       ul.appendChild(li);
     });
   }
